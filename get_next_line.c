@@ -1,18 +1,34 @@
 #include "get_next_line.h"
 
-char	*multifunctcpy(char *buff, char *str, int start, int end)
+static int	ft_memcmp(const void *str1, const void *str2, size_t n)
 {
-	char	*aux;
+	unsigned char	*str1c;
+	unsigned char	*str2c;
+
+	str1c = (unsigned char *)str1;
+	str2c = (unsigned char *)str2;
+	while (0 < n)
+	{
+		if (*str1c != *str2c)
+			return (*str1c - *str2c);
+		n--;
+		str1c++;
+		str2c++;
+	}
+	return (0);
+}
+
+static char	*multifunctcpy(char *buff, char *str, int start, int end)
+{
 	char	*bufsplit;
 
 	bufsplit = ft_substr(buff, start, end);
-	aux = str;
-	str = ft_strjoin(aux, bufsplit);
+	str = ft_strjoin(str, bufsplit);
 	free(bufsplit);
 	return (str);
 }
 
-char	*strtreat(char *str, int fd)
+static char	*strtreat(char *str, int fd, char *line)
 {
 	int		lj;
 	int		re;
@@ -23,17 +39,17 @@ char	*strtreat(char *str, int fd)
 	buff = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buff)
 		return (NULL);
-	re = read(fd, buff, BUFFER_SIZE);
+	str = ft_strdup(line);
 	while (lj == -1 && re != 0)
 	{
-		lj = search_lj(buff);
-		str = multifunctcpy(buff, str, 0, BUFFER_SIZE);
 		re = read(fd, buff, BUFFER_SIZE);
 		if (re == 0)
 			return (str);
+		lj = search_lj(buff);
+		if (lj == -2)
+			break ;
+		str = multifunctcpy(buff, str, 0, re);
 	}
-	if (re == 0)
-		return (NULL);
 	return (str);
 }
 
@@ -43,25 +59,25 @@ char	*get_next_line(int fd)
 	char		*str;
 	int			linelj;
 
-	str = "";
+	str = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (!line)
-		line = "";
 	linelj = search_lj(line);
-	if (linelj != -1)
+	if (linelj > -1)
 	{
 		str = ft_substr(line, 0, linelj);
 		line = ft_substr(line, linelj + 1, BUFFER_SIZE);
 	}
-	else
+	else if (linelj <= -1)
 	{
-		str = ft_strdup(line);
-		str = strtreat(str, fd);
-		if (!str)
-			return (NULL);
+		str = strtreat(str, fd, line);
 		line = ft_substr(str, search_lj(str) + 1, BUFFER_SIZE);
 		str = ft_substr(str, 0, search_lj(str));
+		if (ft_memcmp(str, line, ft_strlen(str)) == 0)
+		{	
+			line = NULL;
+			return (NULL);
+		}
 	}
 	return (str);
 }

@@ -5,6 +5,8 @@ int	ft_strlen(const char *c)
 	int	i;
 
 	i = 0;
+	if (!c)
+		return (0);
 	while (c[i])
 		i++;
 	return (i);
@@ -19,7 +21,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 	i = 0;
 	j = 0;
-	if (!(s1 && s2))
+	if (!s2)
 		return (NULL);
 	s2len = ft_strlen(s2);
 	news = (char *)malloc((ft_strlen(s1) + s2len + 1) * sizeof(char));
@@ -45,6 +47,8 @@ char	*ft_strdup(const char *s)
 	char	*p;
 	int		i;
 
+	if (!s)
+		return (NULL);
 	i = 0;
 	len = ft_strlen(s);
 	p = malloc(len * sizeof(char) + 1);
@@ -90,6 +94,8 @@ int	search_lj(char *str)
 	int	i;
 
 	i = 0;
+	if (!str || ft_strlen(str) == 0)
+		return (-2);
 	while (str[i])
 	{
 		if (str[i] == '\n')
