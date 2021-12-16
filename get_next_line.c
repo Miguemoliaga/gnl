@@ -59,10 +59,10 @@ char	*get_next_line(int fd)
 	char		*str;
 	int			linelj;
 
-	str = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	linelj = search_lj(line);
+	str = NULL;
 	if (linelj > -1)
 	{
 		str = ft_substr(line, 0, linelj);
@@ -73,26 +73,11 @@ char	*get_next_line(int fd)
 		str = strtreat(str, fd, line);
 		line = ft_substr(str, search_lj(str) + 1, BUFFER_SIZE);
 		str = ft_substr(str, 0, search_lj(str));
-		if (ft_memcmp(str, line, ft_strlen(str)) == 0)
+		if (ft_memcmp(str, line, ft_strlen(line)) == 0)
 		{	
 			line = NULL;
 			return (NULL);
 		}
 	}
 	return (str);
-}
-
-int	main(void)
-{
-	int		fd;
-	char	*str;
-	int		i;
-
-	i = 0;
-	fd = open("filex.txt", O_RDONLY);
-	while (i++ < 10)
-	{
-		str = get_next_line(fd);
-		printf("%s\n", str);
-	}
 }

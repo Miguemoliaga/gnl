@@ -1,6 +1,6 @@
 #include "get_next_line.h"
 
-int	ft_strlen(const char *c)
+int	ft_strlen(char *c)
 {
 	int	i;
 
@@ -12,7 +12,7 @@ int	ft_strlen(const char *c)
 	return (i);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	char	*news;
 	int		i;
@@ -41,7 +41,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (news);
 }
 
-char	*ft_strdup(const char *s)
+char	*ft_strdup(char *s)
 {
 	int		len;
 	char	*p;
@@ -54,7 +54,7 @@ char	*ft_strdup(const char *s)
 	p = malloc(len * sizeof(char) + 1);
 	if (!p)
 		return (NULL);
-	while (i < (len * sizeof(char)))
+	while (i < (len * (int)sizeof(char)))
 	{
 		p[i] = s[i];
 		i++;
@@ -63,7 +63,7 @@ char	*ft_strdup(const char *s)
 	return (p);
 }
 
-char	*ft_substr(char const *s, unsigned int start, int len)
+char	*ft_substr(char *s, unsigned int start, int len)
 {
 	char	*dest;
 	int		i;
@@ -74,7 +74,7 @@ char	*ft_substr(char const *s, unsigned int start, int len)
 		return (ft_strdup(""));
 	if (len > ft_strlen(s))
 		len = ft_strlen(s);
-	else if (start + len > ft_strlen(s))
+	else if ((int)start + len > ft_strlen(s))
 		len = ft_strlen(s) - start;
 	dest = (char *)malloc(len * sizeof(char) + 1);
 	if (!dest)
