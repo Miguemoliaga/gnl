@@ -1,3 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mmartine <mmartine@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/01/05 18:55:35 by mmartine          #+#    #+#             */
+/*   Updated: 2022/01/25 18:51:50 by mmartine         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "get_next_line.h"
+
 #include "get_next_line.h"
 
 int	ft_strlen(char *c)
@@ -12,81 +26,52 @@ int	ft_strlen(char *c)
 	return (i);
 }
 
+void	*ft_memmove(void *dest, const void *src, int n)
+{
+	unsigned char		*destc;
+	unsigned char		*srcc;
+	int					i;
+
+	destc = (unsigned char *)(dest);
+	srcc = (unsigned char *)(src);
+	i = n;
+	if (dest == src || !n)
+		return (dest);
+	if (src < dest)
+	{
+		while (i-- > 0)
+			destc[i] = srcc[i];
+	}
+	else
+	{
+		i = 0;
+		while (i < n)
+		{
+			destc[i] = srcc[i];
+			i++;
+		}
+	}
+	return (dest);
+}
+
 char	*ft_strjoin(char *s1, char *s2)
 {
-	char	*news;
-	int		i;
-	int		j;
-	int		s2len;
+	char	*join;
+	int		l1;
+	int		l2;
 
-	i = 0;
-	j = 0;
-	if (!s2)
+	l1 = ft_strlen(s1);
+	l2 = ft_strlen(s2);
+	if ((!s2 && !s1) || (l1 + l2) == 0)
 		return (NULL);
-	s2len = ft_strlen(s2);
-	news = (char *)malloc((ft_strlen(s1) + s2len + 1) * sizeof(char));
-	if (!news)
+	join = malloc((l1 + l2 + 1) * sizeof(char));
+	if (join == NULL)
 		return (NULL);
-	while (i < ft_strlen(s1) && s1[i])
-	{
-		news[i] = s1[i];
-		i++;
-	}
-	while (j < s2len && s2[j])
-	{
-		news[i + j] = s2[j];
-		j++;
-	}
-	news[i + j] = '\0';
-	return (news);
-}
-
-char	*ft_strdup(char *s)
-{
-	int		len;
-	char	*p;
-	int		i;
-
-	if (!s)
-		return (NULL);
-	i = 0;
-	len = ft_strlen(s);
-	p = malloc(len * sizeof(char) + 1);
-	if (!p)
-		return (NULL);
-	while (i < (len * (int)sizeof(char)))
-	{
-		p[i] = s[i];
-		i++;
-	}
-	p[i] = '\0';
-	return (p);
-}
-
-char	*ft_substr(char *s, unsigned int start, int len)
-{
-	char	*dest;
-	int		i;
-
-	if (!s)
-		return (NULL);
-	if (start >= (unsigned int)ft_strlen(s))
-		return (ft_strdup(""));
-	if (len > ft_strlen(s))
-		len = ft_strlen(s);
-	else if ((int)start + len > ft_strlen(s))
-		len = ft_strlen(s) - start;
-	dest = (char *)malloc(len * sizeof(char) + 1);
-	if (!dest)
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		dest[i] = s[start + i];
-		i++;
-	}
-	dest[len] = '\0';
-	return (dest);
+	ft_memmove(join, s1, l1);
+	ft_memmove(join + l1, s2, l2);
+	join[l1 + l2] = 0;
+	free(s1);
+	return (join);
 }
 
 int	search_lj(char *str)
@@ -95,7 +80,7 @@ int	search_lj(char *str)
 
 	i = 0;
 	if (!str || ft_strlen(str) == 0)
-		return (-2);
+		return (-1);
 	while (str[i])
 	{
 		if (str[i] == '\n')

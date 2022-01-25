@@ -1,83 +1,95 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mmartine <mmartine@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/01/05 18:55:13 by mmartine          #+#    #+#             */
+/*   Updated: 2022/01/25 18:53:09 by mmartine         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
-static int	ft_memcmp(const void *str1, const void *str2, size_t n)
+static char	*get_line(char *str)
 {
-	unsigned char	*str1c;
-	unsigned char	*str2c;
-
-	str1c = (unsigned char *)str1;
-	str2c = (unsigned char *)str2;
-	while (0 < n)
-	{
-		if (*str1c != *str2c)
-			return (*str1c - *str2c);
-		n--;
-		str1c++;
-		str2c++;
-	}
-	return (0);
-}
-
-static char	*multifunctcpy(char *buff, char *str, int start, int end)
-{
-	char	*bufsplit;
-
-	bufsplit = ft_substr(buff, start, end);
-	str = ft_strjoin(str, bufsplit);
-	free(bufsplit);
-	return (str);
-}
-
-static char	*strtreat(char *str, int fd, char *line)
-{
+	char	*ret;
 	int		lj;
-	int		re;
-	char	*buff;
+	int		i;
 
-	lj = -1;
-	re = 1;
-	buff = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buff)
+	i = 0;
+	if (!str)
 		return (NULL);
-	str = ft_strdup(line);
-	while (lj == -1 && re != 0)
+	lj = search_lj(str);
+	if (lj == -1)
+		lj = ft_strlen(str);
+	else if (str[lj] == '\n')
+		lj += 1;
+	ret = (char *)malloc(lj + 1);
+	if (!ret)
+		return (NULL);
+	while (i < lj)
 	{
-		re = read(fd, buff, BUFFER_SIZE);
-		if (re == 0)
-			return (str);
-		lj = search_lj(buff);
-		if (lj == -2)
-			break ;
-		str = multifunctcpy(buff, str, 0, re);
+		ret[i] = str[i];
+		i++;
 	}
-	return (str);
+	ret[lj] = '\0';
+	return (ret);
+}
+
+static char	*get_sta(char *str)
+{
+	char	*ret;
+	int		start;
+	int		i;
+	int		strlen;
+
+	i = -1;
+	if (!str)
+		return (NULL);
+	strlen = ft_strlen(str);
+	start = search_lj(str);
+	if (start == -1)
+		start = ft_strlen(str);
+	else if (str[start] == '\n')
+		start += 1;
+	ret = (char *)malloc(strlen - start + 1);
+	if (!ret)
+		return (NULL);
+	while (++i < (strlen - start))
+		ret[i] = str[i + start];
+	ret[i] = '\0';
+	free(str);
+	if (*ret)
+		return (ret);
+	free(ret);
+	return (NULL);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	*line;
-	char		*str;
-	int			linelj;
+	static char	*sta;
+	char		*line;
+	int			re;
 
+	re = 1;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	linelj = search_lj(line);
-	str = NULL;
-	if (linelj > -1)
+	line = malloc (BUFFER_SIZE + 1);
+	while (re && search_lj(sta) == -1)
 	{
-		str = ft_substr(line, 0, linelj);
-		line = ft_substr(line, linelj + 1, BUFFER_SIZE);
-	}
-	else if (linelj <= -1)
-	{
-		str = strtreat(str, fd, line);
-		line = ft_substr(str, search_lj(str) + 1, BUFFER_SIZE);
-		str = ft_substr(str, 0, search_lj(str));
-		if (ft_memcmp(str, line, ft_strlen(line)) == 0)
-		{	
-			line = NULL;
+		re = read(fd, line, BUFFER_SIZE);
+		if (re < 0)
+		{
+			free(line);
 			return (NULL);
 		}
+		line[re] = '\0';
+		sta = ft_strjoin(sta, line);
 	}
-	return (str);
+	free(line);
+	line = get_line(sta);
+	sta = get_sta(sta);
+	return (line);
 }
