@@ -6,7 +6,7 @@
 /*   By: mmartine <mmartine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 18:55:13 by mmartine          #+#    #+#             */
-/*   Updated: 2022/01/25 18:53:09 by mmartine         ###   ########.fr       */
+/*   Updated: 2022/07/15 14:46:16 by mmartine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,3 +93,17 @@ char	*get_next_line(int fd)
 	sta = get_sta(sta);
 	return (line);
 }
+/*
+int	main(void)
+{
+	int	fd;
+
+	fd = open("filex.txt", O_RDONLY);
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	return (0);
+}*/
